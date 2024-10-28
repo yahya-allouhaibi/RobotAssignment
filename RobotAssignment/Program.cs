@@ -1,9 +1,10 @@
+using RobotAssignment.Configuration;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddServices();
 builder.Services.AddControllers()
     .AddJsonOptions(o =>
     {
