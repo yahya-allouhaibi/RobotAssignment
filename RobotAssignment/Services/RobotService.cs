@@ -10,7 +10,10 @@ namespace RobotAssignment.Services
 
         private Room? _room;
         private Robot? _robot;
-        private string _report;
+        private int _newPositionX;
+        private int _newPositionY;
+        private Direction _newDirection;
+        private string? _report;
 
         /// <summary>
         /// Forms a string of validations error created by fluent validation and returns it.
@@ -25,6 +28,12 @@ namespace RobotAssignment.Services
             return validationErrors;
         }
 
+        /// <summary>
+        /// A method to validate the commands input. The input should only contain the letters L, R and F.
+        /// </summary>
+        /// <param name="commands"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public bool ValidateCommands(string commands)
         {
             bool containsWrongCharacters = Regex.IsMatch(commands.ToUpper(), @"[^LRF]");
@@ -50,6 +59,7 @@ namespace RobotAssignment.Services
             }
             _room = room ?? throw new ArgumentNullException("room was null");
             _robot = robot ?? throw new ArgumentNullException("robot was null");
+            SetInitialRobotValues();
         }
 
         /// <summary>
@@ -67,55 +77,121 @@ namespace RobotAssignment.Services
             return true;
         }
 
+        /// <summary>
+        /// Executes the commands from the user input.
+        /// </summary>
+        /// <param name="commands"></param>
+        /// <returns> A report of the new position of the robot</returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public string ExcecuteCommands(string commands)
         {
             if(_robot is not null && _room is not null)
             {
                 foreach (var command in commands.ToUpper())
                 {
-                    MoveRobot(command, _robot.Direction);
+                    MoveRobot(command, _newDirection);
                 }
 
-                if(_robot.StartPositionY > _room.Depth || _robot.StartPositionX > _room.Width || _robot.StartPositionX < 0 || _robot.StartPositionY < 0)
+                if(_newPositionY > _room.Depth || _newPositionX > _room.Width || _newPositionX < 0 || _newPositionY < 0)
                 {
+                    SetInitialRobotValues();
                     throw new ArgumentOutOfRangeException("The robot walked outside the room bounds.");
                 }
-                _report = $"Report: {_robot.StartPositionX} {_robot.StartPositionY} {_robot.Direction.ToString()}";
+                SetNewRobotValues();
+                _report = $"Report: {_newPositionX} {_newPositionY} {_newDirection}";
             }
             return _report;
         }
 
+        /// <summary>
+        /// Set the initial values of the robot when the robot is initialized and if the robot moves out of bound.
+        /// </summary>
+        private void SetInitialRobotValues()
+        {
+            if (_robot is not null)
+            {
+                _newPositionX = _robot.StartPositionX;
+                _newPositionY = _robot.StartPositionY;
+                _newDirection = _robot.Direction;
+            }
+        }
+        
+        /// <summary>
+        /// Set the new values of the robot when the commands is executed succesfully.
+        /// </summary>
+        private void SetNewRobotValues()
+        {
+            if (_robot is not null)
+            {
+                _robot.StartPositionX = _newPositionX;
+                _robot.StartPositionY = _newPositionY;
+                _robot.Direction = _newDirection;
+            }
+        }
+
+        /// <summary>
+        /// Moves the robot depending in the input of the user.
+        /// </summary>
+        /// <param name="turnDirection"></param>
+        /// <param name="currentDirection"></param>
         private void MoveRobot(char turnDirection, Direction currentDirection)
         {
             if (turnDirection == 'L' && _robot is not null)
             {
-                switch (currentDirection)
-                {
-                    case Direction.N: _robot.Direction = Direction.W; break;
-                    case Direction.E: _robot.Direction = Direction.N; break;
-                    case Direction.S: _robot.Direction = Direction.E; break;
-                    case Direction.W: _robot.Direction = Direction.S; break;
-                }
+                TurnLeft(currentDirection);
             }
             else if (turnDirection == 'R' && _robot is not null)
             {
-                switch (currentDirection)
-                {
-                    case Direction.N: _robot.Direction = Direction.E; break;
-                    case Direction.E: _robot.Direction = Direction.S; break;
-                    case Direction.S: _robot.Direction = Direction.W; break;
-                    case Direction.W: _robot.Direction = Direction.N; break;
-                }
+                TurnRight(currentDirection);
             }
             else if (turnDirection == 'F' && _robot is not null)
             {
-                switch (currentDirection)
-                {
-                    case Direction.N: _robot.StartPositionY++; break;
-                    case Direction.E: _robot.StartPositionX++; break;
-                    case Direction.S: _robot.StartPositionY--; break;
-                    case Direction.W: _robot.StartPositionX--; break;
-                }
+                MoveForward(currentDirection);
+            }
+        }
+
+        /// <summary>
+        /// Sets the new Direction of the robot when it turns left.
+        /// </summary>
+        /// <param name="currentDirection"></param>
+        private void TurnLeft(Direction currentDirection)
+        {
+            switch (currentDirection)
+            {
+                case Direction.N: _newDirection = Direction.W; break;
+                case Direction.E: _newDirection = Direction.N; break;
+                case Direction.S: _newDirection = Direction.E; break;
+                case Direction.W: _newDirection = Direction.S; break;
+            }
+        }
+
+        /// <summary>
+        /// Sets the new Direction of the robot when it turns right.
+        /// </summary>
+        /// <param name="currentDirection"></param>
+        private void TurnRight(Direction currentDirection)
+        {
+            switch (currentDirection)
+            {
+                case Direction.N: _newDirection = Direction.E; break;
+                case Direction.E: _newDirection = Direction.S; break;
+                case Direction.S: _newDirection = Direction.W; break;
+                case Direction.W: _newDirection = Direction.N; break;
+            }
+        }
+
+        /// <summary>
+        /// Sets the new X or Y position of the robot when it moves forward.
+        /// </summary>
+        /// <param name="currentDirection"></param>
+        private void MoveForward(Direction currentDirection)
+        {
+            switch (currentDirection)
+            {
+                case Direction.N: _newPositionY++; break;
+                case Direction.E: _newPositionX++; break;
+                case Direction.S: _newPositionY--; break;
+                case Direction.W: _newPositionX--; break;
             }
         }
     }
