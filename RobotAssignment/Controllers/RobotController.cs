@@ -17,6 +17,15 @@ namespace RobotAssignment.Controllers
             _robotService = robotService;
         }
 
+        /// <summary>
+        /// Enpoint to Initialize the robot.
+        /// </summary>
+        /// <param name="roomWidth"></param>
+        /// <param name="roomDepth"></param>
+        /// <param name="startPositionX"></param>
+        /// <param name="startPositionY"></param>
+        /// <param name="robotStartDirection"></param>
+        /// <returns> "Robot initialized" if the initialization was successful. </returns>
         [HttpPost("InitializeRobot")]
         public IActionResult InitializeRobot(int roomWidth, int roomDepth, int startPositionX, int startPositionY, Direction robotStartDirection)
         {
@@ -50,6 +59,11 @@ namespace RobotAssignment.Controllers
             }
         }
 
+        /// <summary>
+        /// Enpoint to execute the commands provided by the user.
+        /// </summary>
+        /// <param name="commands"></param>
+        /// <returns> The new position of the robot if the commands were executed successfully. </returns>
         [HttpPost("ExecuteCommands")]
         public IActionResult ExecuteCommands(string commands)
         {
