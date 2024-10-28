@@ -5,6 +5,10 @@ namespace RobotAssignment.Services
 {
     public class RobotService : IRobotService
     {
+
+        private Room? _room;
+        private Robot? _robot;
+
         public string ReturnValidationErrorString(ValidationResult robotValidationResult, ValidationResult roomValidationResult)
         {
             string validationErrors = string.Join(Environment.NewLine,
@@ -12,9 +16,10 @@ namespace RobotAssignment.Services
             return validationErrors;
         }
 
-        public Task InitializeRobot(Room room, Robot robot)
+        public void  InitializeRobot(Room room, Robot robot)
         {
-            throw new NotImplementedException();
+            _room = room ?? throw new ArgumentNullException("room was null");
+            _robot = robot ?? throw new ArgumentNullException("robot was null");
         }
     }
 }

@@ -34,7 +34,16 @@ namespace RobotAssignment.Controllers
                 string validationErrors = _robotService.ReturnValidationErrorString(robotValidationResult, roomValidationResult);
                 return BadRequest(validationErrors);
             }
-            return Ok(robot);
+
+            try
+            {
+                _robotService.InitializeRobot(room, robot);
+                return Ok("Robot initialized");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
     }
 }
