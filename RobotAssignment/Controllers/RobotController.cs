@@ -49,5 +49,29 @@ namespace RobotAssignment.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpPost("ExecuteCommands")]
+        public IActionResult ExecuteCommands(string commands)
+        {
+            try
+            {
+                if (String.IsNullOrEmpty(commands))
+                {
+                    return BadRequest("The commands can not be null or empty");
+                }
+                _robotService.ValidateCommands(commands);
+                var newPosition = _robotService.ExcecuteCommands(commands);
+
+                return Ok(newPosition);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

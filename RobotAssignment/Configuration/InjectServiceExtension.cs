@@ -6,7 +6,7 @@ namespace RobotAssignment.Configuration
     {
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
-            services.AddTransient<IRobotService, RobotService>();
+            services.AddSingleton<IRobotService, RobotService>();
 
             return services;
         }
