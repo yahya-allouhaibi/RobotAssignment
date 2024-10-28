@@ -19,7 +19,7 @@ namespace RobotAssignment.Tests
         }
 
         [Fact]
-        public void InitializeRobot_With_The_Valid_Values_Returns_OK()
+        public void InitializeRobot_With_Valid_Values_Returns_OK()
         {
             //Arrange
             var roomWidth = 5;
@@ -78,6 +78,76 @@ namespace RobotAssignment.Tests
             //Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
             Assert.Equal("The robot can not start from outside the room", badRequestResult.Value);
+        }
+
+        [Fact]
+        public void ExecuteCommands_With_Valid_Values_Returns_OK()
+        {
+            //Arrange
+            var commands = "FFLR";
+            var newPosition = "Report: 1 2 W";
+
+            _robotService.Setup(service => service.ValidateCommands(commands))
+                .Returns(true);
+            _robotService.Setup(service => service.ExcecuteCommands(commands))
+                .Returns(newPosition);
+
+            //Act
+            var result = _controller.ExecuteCommands(commands);
+
+            //Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(newPosition, okResult.Value);
+        }
+
+        [Fact]
+        public void ExecuteCommands_With_Empty_String_Returns_BadRequest()
+        {
+            //Arrange
+            var commands = "";
+
+            //Act
+            var result = _controller.ExecuteCommands(commands);
+
+            //Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("The commands can not be null or empty", badRequestResult.Value);
+        }
+
+        [Fact]
+        public void ExecuteCommands_With_Invalid_Input_Returns_BadRequest()
+        {
+            //Arrange
+            var commands = "FFGLLR";
+
+            _robotService.Setup(service => service.ValidateCommands(commands))
+                .Throws(new ArgumentException("The commands can not contain characters other than L, R and F"));
+
+            //Act
+            var result = _controller.ExecuteCommands(commands);
+
+            //Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("The commands can not contain characters other than L, R and F", badRequestResult.Value);
+        }
+
+        [Fact]
+        public void ExecuteCommands_Returns_BadRequest_When_Robot_Moves_Out_Of_Bounds()
+        {
+            //Arrange
+            var commands = "FFFFFFFFFFFF";
+
+            _robotService.Setup(service => service.ValidateCommands(commands))
+                .Returns(true);
+            _robotService.Setup(service => service.ExcecuteCommands(commands))
+                .Throws(new ArgumentOutOfRangeException(null, "The robot walked outside the room bounds."));
+
+            //Act
+            var result = _controller.ExecuteCommands(commands);
+
+            //Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("The robot walked outside the room bounds.", badRequestResult.Value);
         }
     }
 }

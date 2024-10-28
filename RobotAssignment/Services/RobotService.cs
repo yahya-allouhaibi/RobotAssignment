@@ -95,7 +95,7 @@ namespace RobotAssignment.Services
                 if(_newPositionY > _room.Depth || _newPositionX > _room.Width || _newPositionX < 0 || _newPositionY < 0)
                 {
                     SetInitialRobotValues();
-                    throw new ArgumentOutOfRangeException("The robot walked outside the room bounds.");
+                    throw new ArgumentOutOfRangeException(null, "The robot walked outside the room bounds.");
                 }
                 SetNewRobotValues();
                 _report = $"Report: {_newPositionX} {_newPositionY} {_newDirection}";
