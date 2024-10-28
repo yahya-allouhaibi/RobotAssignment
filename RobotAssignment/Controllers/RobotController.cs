@@ -40,6 +40,10 @@ namespace RobotAssignment.Controllers
                 _robotService.InitializeRobot(room, robot);
                 return Ok("Robot initialized");
             }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);

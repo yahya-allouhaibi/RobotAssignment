@@ -18,8 +18,21 @@ namespace RobotAssignment.Services
 
         public void  InitializeRobot(Room room, Robot robot)
         {
+            if(!IsRobotInRoom(room, robot))
+            {
+                throw new ArgumentException("The robot can not start from outside the room");
+            }
             _room = room ?? throw new ArgumentNullException("room was null");
             _robot = robot ?? throw new ArgumentNullException("robot was null");
+        }
+
+        public bool IsRobotInRoom(Room room, Robot robot)
+        {
+            if(room.Width < robot.StartPositionX || room.Depth < robot.StartPositionY)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }
