@@ -18,13 +18,13 @@ namespace RobotAssignment.Controllers
         }
 
         /// <summary>
-        /// Enpoint to Initialize the robot.
+        /// Enpoint to Initialize the robot and the room.
         /// </summary>
-        /// <param name="roomWidth"></param>
-        /// <param name="roomDepth"></param>
-        /// <param name="startPositionX"></param>
-        /// <param name="startPositionY"></param>
-        /// <param name="robotStartDirection"></param>
+        /// <param name="roomWidth">Enter the rooms Width.</param>
+        /// <param name="roomDepth">Enter the rooms depth.</param>
+        /// <param name="startPositionX">Enter the robots X starting position.</param>
+        /// <param name="startPositionY">Enter the robots Y starting position.</param>
+        /// <param name="robotStartDirection">Enter the Direction the robot is facing (N: North, E: East, S: South, W: West)</param>
         /// <returns> "Robot initialized" if the initialization was successful. </returns>
         [HttpPost("InitializeRobot")]
         public IActionResult InitializeRobot(int roomWidth, int roomDepth, int startPositionX, int startPositionY, Direction robotStartDirection)
@@ -60,9 +60,11 @@ namespace RobotAssignment.Controllers
         }
 
         /// <summary>
-        /// Enpoint to execute the commands provided by the user.
+        /// Endpoint to execute the commands provided by the user.
+        ///  Enter the commands (L: turn Left, R: turn Right, F: move Forward).
+        ///  Always start by Initializing the robot before executing the commands,or no report will be returned.
         /// </summary>
-        /// <param name="commands"></param>
+        /// <param name="commands">Can only contain the letters L, R and F</param>
         /// <returns> The new position of the robot if the commands were executed successfully. </returns>
         [HttpPost("ExecuteCommands")]
         public IActionResult ExecuteCommands(string commands)

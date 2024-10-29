@@ -100,7 +100,7 @@ namespace RobotAssignment.Services
                 SetNewRobotValues();
                 _report = $"Report: {_newPositionX} {_newPositionY} {_newDirection}";
             }
-            return _report ?? "No report available";
+            return _report ?? "No report available, try to initialize the room and the robot first";
         }
 
         /// <summary>
